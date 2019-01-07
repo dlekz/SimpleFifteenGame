@@ -20,7 +20,7 @@ namespace SimpleFifteenGame.AvaloniaApp
             InitializeComponent();
             Coords = CoordList_Init();
             Elements = InitElements_Test(Coords);
-            _content_Init();
+            _button_content_Init();
             this.KeyDown += Window_KeyDown_Test;
         }
         ///<summery>
@@ -129,5 +129,23 @@ namespace SimpleFifteenGame.AvaloniaApp
         {
             AvaloniaXamlLoader.Load(this);
         }
+
+        private void _button_content_Init()
+        {
+            var buttonsGrid = this.FindControl<Grid>("buttonsGrid");
+            foreach(var el in Elements)
+            {
+                if (el.Value == "") continue;
+                var button = new Button();
+                button.Classes.Add("content");
+                int rowPos = Convert.ToInt32(el.Position.Substring(0,1)) - 1;
+                int colPos = Convert.ToInt32(el.Position.Substring(1,1)) - 1;
+                Grid.SetRow(button,rowPos);
+                Grid.SetColumn(button,colPos);
+                buttonsGrid.Children.Add(button);
+                button.Content = el.Value;
+            }
+        }
+
     }
 }
