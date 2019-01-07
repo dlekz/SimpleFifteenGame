@@ -18,10 +18,14 @@
       <Setter Property="HorizontalAlignment" Value="Center" />
     </Style>
     <Style Selector="Border.content">
-      <Setter Property="Height" Value="60" />
-      <Setter Property="Width" Value="60" />
       <Setter Property="BorderBrush" Value="Black" />
       <Setter Property="BorderThickness" Value="2" />
+    </Style>
+    <Style Selector="Button.content">
+      <Setter Property="Margin" Value="1" />
+      <Setter Property="FontSize" Value="30" />
+      <Setter Property="FontFamily" Value="Ubuntu Mono" />
+      <Setter Property="FontWeight" Value="Bold" />
     </Style>
   </Application.Styles>
 </Application>

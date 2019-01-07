@@ -3,7 +3,11 @@
         Title="SimpleFifteenGame" MinWidth="280" MinHeight="280"
         MaxWidth="280" MaxHeight="280">
     <Grid ColumnDefinitions="20,*,20" RowDefinitions="20,*,20" Background="LightGray" Name="grid">
-    <StackPanel Grid.Column="1" Grid.Row="1">
+       <Border Classes="content" Grid.Row="1" Grid.Column="1">
+            <Grid ColumnDefinitions="*,*,*,*" RowDefinitions="*,*,*,*" Background="LightGray" Name="buttonsGrid">
+            </Grid>
+        </Border>
+    <!--<StackPanel Grid.Column="1" Grid.Row="1">
         <DockPanel>
             <Border Classes="content"><TextBlock Name="cell_11" Classes="content"/></Border>
             <Border Classes="content"><TextBlock x:Name="cell_12" Classes="content"/></Border>
@@ -28,6 +32,7 @@
             <Border Classes="content"><TextBlock x:Name="cell_43" Classes="content"/></Border>
             <Border Classes="content"><TextBlock x:Name="cell_44" Classes="content"/></Border>
         </DockPanel>
-    </StackPanel>
+    </StackPanel>-->
     </Grid>
+
 </Window>
