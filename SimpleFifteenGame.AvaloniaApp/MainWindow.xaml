@@ -1,5 +1,33 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="SimpleFifteenGame.AvaloniaApp">
-    Hello World!
+        Title="SimpleFifteenGame" MinWidth="280" MinHeight="280"
+        MaxWidth="280" MaxHeight="280">
+    <Grid ColumnDefinitions="20,*,20" RowDefinitions="20,*,20" Background="LightGray" Name="grid">
+    <StackPanel Grid.Column="1" Grid.Row="1">
+        <DockPanel>
+            <Border Classes="content"><TextBlock Name="cell_11" Classes="content"/></Border>
+            <Border Classes="content"><TextBlock x:Name="cell_12" Classes="content"/></Border>
+            <Border Classes="content"><TextBlock x:Name="cell_13" Classes="content"/></Border>
+            <Border Classes="content"><TextBlock x:Name="cell_14" Classes="content"/></Border>
+        </DockPanel>
+        <DockPanel>
+            <Border Classes="content"><TextBlock x:Name="cell_21" Classes="content"/></Border>
+            <Border Classes="content"><TextBlock x:Name="cell_22" Classes="content"/></Border>
+            <Border Classes="content"><TextBlock x:Name="cell_23" Classes="content"/></Border>
+            <Border Classes="content"><TextBlock x:Name="cell_24" Classes="content"/></Border>
+        </DockPanel>
+        <DockPanel>
+            <Border Classes="content"><TextBlock x:Name="cell_31" Classes="content"/></Border>
+            <Border Classes="content"><TextBlock x:Name="cell_32" Classes="content"/></Border>
+            <Border Classes="content"><TextBlock x:Name="cell_33" Classes="content"/></Border>
+            <Border Classes="content"><TextBlock x:Name="cell_34" Classes="content"/></Border>
+        </DockPanel>
+        <DockPanel>
+            <Border Classes="content"><TextBlock x:Name="cell_41" Classes="content"/></Border>
+            <Border Classes="content"><TextBlock x:Name="cell_42" Classes="content"/></Border>
+            <Border Classes="content"><TextBlock x:Name="cell_43" Classes="content"/></Border>
+            <Border Classes="content"><TextBlock x:Name="cell_44" Classes="content"/></Border>
+        </DockPanel>
+    </StackPanel>
+    </Grid>
 </Window>
