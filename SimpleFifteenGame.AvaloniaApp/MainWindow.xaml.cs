@@ -35,53 +35,43 @@ namespace SimpleFifteenGame.AvaloniaApp
         }
         private void UpButton_Click()
         {
-            string startPos = Elements.First().Position;
-            int[] startCoords = startPos.ToArray()
-                                .Select(el => int.Parse(el.ToString())).ToArray();
-            startCoords[0] += 1;
-            string finPos = $"{startCoords[0]}{startCoords[1]}";
-
-            Sinchronize(startPos,finPos);
+            var startCoord = Elements.First().Coord;
+            var finCoord = startCoord;
+            finCoord.y += 1;
+            Sinchronize($"{startCoord.x}{startCoord.y}",$"{finCoord.x}{finCoord.y}");
         }
 
         private void DownButton_Click()
         {
-            string startPos = Elements.First().Position;
-            int[] startCoords = startPos.ToArray()
-                                .Select(el => int.Parse(el.ToString())).ToArray();
-            startCoords[0] -= 1;
-            string finPos = $"{startCoords[0]}{startCoords[1]}";
-
-            Sinchronize(startPos,finPos);
+            var startCoord = Elements.First().Coord;
+            var finCoord = startCoord;
+            finCoord.y -= 1;
+            Sinchronize($"{startCoord.x}{startCoord.y}",$"{finCoord.x}{finCoord.y}");
         }
 
         private void LeftButton_Click()
         {
-            string startPos = Elements.First().Position;
-            int[] startCoords = startPos.ToArray()
-                                .Select(el => int.Parse(el.ToString())).ToArray();
-            startCoords[1] += 1;
-            string finPos = $"{startCoords[0]}{startCoords[1]}";
-
-            Sinchronize(startPos,finPos);
+            var startCoord = Elements.First().Coord;
+            var finCoord = startCoord;
+            finCoord.x += 1;
+            Sinchronize($"{startCoord.x}{startCoord.y}",$"{finCoord.x}{finCoord.y}");
         }
         private void RightButton_Click()
         {
-            string startPos = Elements.First().Position;
-            int[] startCoords = startPos.ToArray()
-                                .Select(el => int.Parse(el.ToString())).ToArray();
-            startCoords[1] -= 1;
-            string finPos = $"{startCoords[0]}{startCoords[1]}";
-
-            Sinchronize(startPos,finPos);
+            var startCoord = Elements.First().Coord;
+            var finCoord = startCoord;
+            finCoord.x -= 1;
+            Sinchronize($"{startCoord.x}{startCoord.y}",$"{finCoord.x}{finCoord.y}");
         }
         private void Sinchronize(string startPos, string finPos)
         {
             if(!Coords.Contains(finPos)) return;
-            string firstName = Elements.Where( el => el.Position == finPos).First().Value;
-            Elements.Where( el => el.Position == finPos).First().Position = startPos;
-            string secondName = Elements.Where( el => el.Position == startPos).First().Value;
-            Elements.Where( el => el.Position == startPos).First().Position = finPos;
+            string firstName = Elements.Where( el => $"{el.Coord.x}{el.Coord.y}" == finPos).First().Value;
+            Elements.Where( el => $"{el.Coord.x}{el.Coord.y}" == finPos).First().Coord = 
+                (int.Parse(startPos.Substring(0,1)),int.Parse(startPos.Substring(1,1)));
+            string secondName = Elements.Where( el => $"{el.Coord.x}{el.Coord.y}" == startPos).First().Value;
+            Elements.Where( el => $"{el.Coord.x}{el.Coord.y}" == startPos).First().Coord = 
+                (int.Parse(finPos.Substring(0,1)),int.Parse(finPos.Substring(1,1)));
 
             Dispatcher.UIThread.InvokeAsync(()=>
             {
@@ -99,7 +89,8 @@ namespace SimpleFifteenGame.AvaloniaApp
             for(int i = 0; workingCoords.Count > 0; i++)
             { 
                 string value = (i != 0) ? i.ToString() : "";
-                elements.Add(new NumElement(value,CoordRandomizer(ref workingCoords)));
+                string randomStr = CoordRandomizer(ref workingCoords);
+                elements.Add(new NumElement(value, int.Parse(randomStr.Substring(0,1)), int.Parse(randomStr.Substring(1,1))));
             }
             return elements.ToArray();
         }
@@ -109,13 +100,6 @@ namespace SimpleFifteenGame.AvaloniaApp
                                     "21","22","23","24",
                                     "31","32","33","34",
                                     "41","42","43","44"};
-        }
-        private void _content_Init()
-        {
-            foreach(var el in Elements)
-            {
-                this.FindControl<TextBlock>($"cell_{el.Position}").Text = el.Value;
-            }
         }
         private string CoordRandomizer(ref List<string> coords)
         {
@@ -138,8 +122,8 @@ namespace SimpleFifteenGame.AvaloniaApp
                 if (el.Value == "") continue;
                 var button = new Button();
                 button.Classes.Add("content");
-                int rowPos = Convert.ToInt32(el.Position.Substring(0,1)) - 1;
-                int colPos = Convert.ToInt32(el.Position.Substring(1,1)) - 1;
+                int rowPos = el.Coord.x - 1;
+                int colPos = el.Coord.y - 1;
                 Grid.SetRow(button,rowPos);
                 Grid.SetColumn(button,colPos);
                 buttonsGrid.Children.Add(button);
