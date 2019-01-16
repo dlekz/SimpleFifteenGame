@@ -14,19 +14,22 @@ namespace SimpleFifteenGame.AvaloniaApp
     {
 
         private NumElement[] Elements {set; get;}
-        private List<string> Coords {set; get;}
+        private List<(int x,int y)> _coords {set; get;}
+
         public MainWindow()
         {
             InitializeComponent();
-            Coords = CoordList_Init();
-            Elements = InitElements_Test(Coords);
-            _button_content_Init();
-            this.KeyDown += Window_KeyDown_Test;
+            this.KeyDown += Window_KeyDown;
         }
-        ///<summery>
-        /// Test this.KeyDown Event
-        ///</summery>
-        private void Window_KeyDown_Test(object sender, KeyEventArgs e) 
+
+        private void InitializeComponent()
+        {
+            AvaloniaXamlLoader.Load(this);
+            _coords = CoordList();
+            Elements = InitElements(_coords);
+            _button_content_Init();
+        }
+        private void Window_KeyDown(object sender, KeyEventArgs e)
         {
             if(e.Key.ToString() == "Up") Task.Run(() => UpButton_Click());
             if(e.Key.ToString() == "Down") Task.Run(() => DownButton_Click());
@@ -35,83 +38,96 @@ namespace SimpleFifteenGame.AvaloniaApp
         }
         private void UpButton_Click()
         {
-            var startCoord = Elements.First().Coord;
-            var finCoord = startCoord;
-            finCoord.y += 1;
-            Sinchronize($"{startCoord.x}{startCoord.y}",$"{finCoord.x}{finCoord.y}");
+            var finPos = Elements.First().Coord;
+            var startPos = finPos;
+            startPos.y += 1;
+            _synchronize_buttons(startPos.x,startPos.y,finPos.x,finPos.y);
         }
 
         private void DownButton_Click()
         {
-            var startCoord = Elements.First().Coord;
-            var finCoord = startCoord;
-            finCoord.y -= 1;
-            Sinchronize($"{startCoord.x}{startCoord.y}",$"{finCoord.x}{finCoord.y}");
+            var finPos = Elements.First().Coord;
+            var startPos = finPos;
+            startPos.y -= 1;
+            _synchronize_buttons(startPos.x,startPos.y,finPos.x,finPos.y);
         }
 
         private void LeftButton_Click()
         {
-            var startCoord = Elements.First().Coord;
-            var finCoord = startCoord;
-            finCoord.x += 1;
-            Sinchronize($"{startCoord.x}{startCoord.y}",$"{finCoord.x}{finCoord.y}");
+            var finPos = Elements.First().Coord;
+            var startPos = finPos;
+            startPos.x += 1;
+            _synchronize_buttons(startPos.x,startPos.y,finPos.x,finPos.y);
         }
         private void RightButton_Click()
         {
-            var startCoord = Elements.First().Coord;
-            var finCoord = startCoord;
-            finCoord.x -= 1;
-            Sinchronize($"{startCoord.x}{startCoord.y}",$"{finCoord.x}{finCoord.y}");
+            var finPos = Elements.First().Coord;
+            var startPos = finPos;
+            startPos.x -= 1;
+            _synchronize_buttons(startPos.x,startPos.y,finPos.x,finPos.y);
         }
-        private void Sinchronize(string startPos, string finPos)
-        {
-            if(!Coords.Contains(finPos)) return;
-            string firstName = Elements.Where( el => $"{el.Coord.x}{el.Coord.y}" == finPos).First().Value;
-            Elements.Where( el => $"{el.Coord.x}{el.Coord.y}" == finPos).First().Coord = 
-                (int.Parse(startPos.Substring(0,1)),int.Parse(startPos.Substring(1,1)));
-            string secondName = Elements.Where( el => $"{el.Coord.x}{el.Coord.y}" == startPos).First().Value;
-            Elements.Where( el => $"{el.Coord.x}{el.Coord.y}" == startPos).First().Coord = 
-                (int.Parse(finPos.Substring(0,1)),int.Parse(finPos.Substring(1,1)));
+        ///<summery>
+        /// synchronization buttons position with collection of ellements
+        ///</summery>
+        ///<param name="x0">x coordinate for current element</param>
+        ///<param name="y0">x coordinate for current element</param>
+        ///<param name="x">x coordinate for 0 element</param>
+        ///<param name="y">y coordinate for 0 element</param>
 
-            Dispatcher.UIThread.InvokeAsync(()=>
+        private void _synchronize_buttons(int x0, int y0, int x, int y) 
+        {
+            Elements.Where( el => el.Coord == (x0,y0)).First().Coord = (x,y);
+            Elements.Where( el => el.Coord == (x,y)).First().Coord = (x0,y0);
+
+            Dispatcher.UIThread.InvokeAsync( ()=> 
             {
-                this.FindControl<TextBlock>($"cell_{startPos}").Text = firstName;
-                this.FindControl<TextBlock>($"cell_{finPos}").Text = secondName;
+                var grid = this.FindControl<Grid>("buttonsGrid");
+                foreach(AvaloniaObject el in grid.Children) 
+                {
+                    if(Grid.GetColumn(el) == x0 && Grid.GetRow(el) == y0)
+                    {
+                        Grid.SetRow(el,y);
+                        Grid.SetColumn(el,x);
+                    }
+                }
+                
             });
         }
         ///<summery>
-        /// Test Elements Init
+        /// init collection of elements
         ///</summery>
-        private NumElement[] InitElements_Test(List<string> coords)
+        ///<param name="coords">list of coordinates</params>
+        ///<returns>current collection of elements</returns>
+        private NumElement[] InitElements(List<(int x, int y)> coords) 
         {
-            List<string> workingCoords = coords.Select(el => el).ToList();
+            var workingCoords = coords.Select(el => el).ToList();
             List<NumElement> elements = new List<NumElement>();
+            
             for(int i = 0; workingCoords.Count > 0; i++)
             { 
                 string value = (i != 0) ? i.ToString() : "";
-                string randomStr = CoordRandomizer(ref workingCoords);
-                elements.Add(new NumElement(value, int.Parse(randomStr.Substring(0,1)), int.Parse(randomStr.Substring(1,1))));
+                var randomCoord = CoordRandomizer(ref workingCoords);
+                elements.Add(new NumElement(value, randomCoord.x, randomCoord.y));
             }
             return elements.ToArray();
         }
-        private List<string> CoordList_Init()
-        {
-            return new List<string>(){"11","12","13","14",
-                                    "21","22","23","24",
-                                    "31","32","33","34",
-                                    "41","42","43","44"};
+        ///<summery>
+        /// init elements collection
+        ///</summery>
+        private List<(int x, int y)> CoordList(){
+            return new List<(int x, int y)>(){
+                (0,0),(1,0),(2,0),(3,0),
+                (0,1),(1,1),(2,1),(3,1),
+                (0,2),(1,2),(2,2),(3,2),
+                (0,3),(1,3),(2,3),(3,3),
+            };
         }
-        private string CoordRandomizer(ref List<string> coords)
+        private (int x, int y) CoordRandomizer(ref List <(int x, int y)> coords)
         {
-            int index = (coords.Count() > 1) ? new Random().Next(0,coords.Count()-1) : 0;
-            string result = coords[index];
+            int index = (coords.Count() > 1) ? new Random().Next(0, coords.Count() - 1) : 0;
+            var point = coords[index];
             coords.RemoveAt(index);
-            return result;
-        }
-
-        private void InitializeComponent()
-        {
-            AvaloniaXamlLoader.Load(this);
+            return point;
         }
 
         private void _button_content_Init()
@@ -122,10 +138,8 @@ namespace SimpleFifteenGame.AvaloniaApp
                 if (el.Value == "") continue;
                 var button = new Button();
                 button.Classes.Add("content");
-                int rowPos = el.Coord.x - 1;
-                int colPos = el.Coord.y - 1;
-                Grid.SetRow(button,rowPos);
-                Grid.SetColumn(button,colPos);
+                Grid.SetRow(button,el.Coord.y);
+                Grid.SetColumn(button,el.Coord.x);
                 buttonsGrid.Children.Add(button);
                 button.Content = el.Value;
             }
